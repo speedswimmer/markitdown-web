@@ -1,0 +1,92 @@
+# Public markitdown-web behind a Cloudflare Tunnel, with local OCR (Tesseract), no API key.
+# Layout on the Pi: /opt/markitdown-public/{compose.yaml,.env,set-token.sh,isolate.sh}
+# The image is built by /opt/markitdown-web; this file only runs it.
+# Tunnel route (Cloudflare dashboard): markdown.ki-kuenstler.com -> http://markitdown-public:8090
+services:
+  markitdown-public:
+    image: markitdown-web:local
+    container_name: markitdown-public
+    # --limit-concurrency: uvicorn answers 503 above 4 connections (the healthcheck needs one slot).
+    # Only reachable inside the internal "public" network, never published.
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8090", "--no-server-header", "--limit-concurrency", "4"]
+    environment:
+      MAX_UPLOAD_MB: "20"
+      MAX_PARALLEL: "1"
+      MAX_UNZIPPED_MB: "100"
+      # About 1 s per page with 2 CPUs: 100 pages stay under two minutes.
+      MAX_PDF_PAGES: "100"
+      # Scans are read locally by Tesseract, about 5 s per page with 2 CPUs.
+      OCR_ENGINE: tesseract
+      OCR_JOBS: "2"
+      MAX_OCR_PAGES: "20"
+      COUNTER_FILE: /data/converted.txt
+      # Coffee donations received so far; raise it by hand after each one.
+      COFFEES: "1"
+    networks:
+      - public
+    restart: unless-stopped
+    read_only: true
+    # Starlette spools uploads to /tmp before the parallelism semaphore applies;
+    # OCRmyPDF keeps its page images there too (tmpfs counts against mem_limit).
+    tmpfs:
+      - /tmp:size=384m,mode=1777
+    # The only writable place besides /tmp: the conversion counter shown on the page.
+    volumes:
+      - data:/data
+    cpus: 2.0
+    mem_limit: 1536m
+    memswap_limit: 1536m
+    pids_limit: 128
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.10.7
+    container_name: cloudflared
+    command: ["tunnel", "--no-autoupdate", "--metrics", "127.0.0.1:20241", "run"]
+    # The host's upstream DNS is the LAN router / tailnet resolver, which isolate.sh blocks.
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    env_file: .env
+    networks:
+      - public
+      - tunnel-egress
+    depends_on:
+      markitdown-public:
+        condition: service_healthy
+    restart: unless-stopped
+    read_only: true
+    mem_limit: 256m
+    memswap_limit: 256m
+    pids_limit: 64
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging: *logging
+
+networks:
+  # No internet: the app only talks to cloudflared.
+  public:
+    internal: true
+    enable_ipv6: false
+    ipam:
+      config:
+        - subnet: 172.30.1.0/24
+  # Internet access for cloudflared only; private ranges are blocked by isolate.sh.
+  tunnel-egress:
+    enable_ipv6: false
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  data:

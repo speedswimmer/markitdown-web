@@ -1,0 +1,38 @@
+# markitdown-web: files to Markdown, tailnet only.
+# Layout on the Pi: /opt/markitdown-web/{compose.yaml,.env,src/}
+# Host network, bound to 127.0.0.1:8090, exposed via `tailscale serve --https=8443`.
+services:
+  markitdown-web:
+    build:
+      context: ./src
+      target: runtime
+    image: markitdown-web:local
+    container_name: markitdown-web
+    network_mode: host
+    restart: unless-stopped
+    env_file: .env
+    read_only: true
+    tmpfs:
+      - /tmp:size=192m,mode=1777
+    environment:
+      COUNTER_FILE: /data/converted.txt
+      # Coffee donations received so far; raise it by hand after each one.
+      COFFEES: "1"
+    # The only writable place besides /tmp: the conversion counter.
+    volumes:
+      - data:/data
+    mem_limit: 2g
+    memswap_limit: 2g
+    pids_limit: 128
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  data:

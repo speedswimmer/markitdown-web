@@ -1,0 +1,12 @@
+[Unit]
+Description=Block the markitdown-public tunnel networks from private ranges
+After=ufw.service
+Before=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/markitdown-public/isolate.sh
+
+[Install]
+WantedBy=multi-user.target docker.service

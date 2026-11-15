@@ -1,0 +1,10 @@
+markitdown[docx,pptx,xlsx]==0.1.9
+pymupdf==2.1
+pymupdf4llm==2.1
+pymupdf-layout==2.1
+anthropic==2.4.0
+fastapi==0.162.0
+uvicorn==0.54.0
+pypdf==6.21.4
+python-multipart==0.0.33
+httpx2==2.16.0

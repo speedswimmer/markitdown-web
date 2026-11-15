@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /convert
+Disallow: /health
+Allow: /
+
+Sitemap: https://markdown.ki-kuenstler.com/sitemap.xml

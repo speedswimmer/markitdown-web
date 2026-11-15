@@ -1,0 +1,6 @@
+*.sh text eol=lf
+Dockerfile text eol=lf
+# Keep vendored files byte-identical to upstream (hashes in README.md).
+app/static/vendor/* -text
+*.service text eol=lf
+*.yaml text eol=lf
