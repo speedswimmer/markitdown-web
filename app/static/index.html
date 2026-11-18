@@ -12,6 +12,8 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#2563eb">
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="de_DE">
   <meta property="og:site_name" content="KI-Künstler · Markdown">
@@ -23,19 +25,95 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="PDF, Word, PowerPoint und Excel in Markdown umwandeln">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PDF, Word, PowerPoint und Excel in Markdown umwandeln">
+  <meta name="twitter:description" content="Kostenlos, ohne Anmeldung, Dateien werden nicht gespeichert. Markdown spart Tokens bei ChatGPT und Claude.">
+  <meta name="twitter:image" content="https://markdown.ki-kuenstler.com/static/og-image.png">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "KI-Künstler · Markdown",
-    "url": "https://markdown.ki-kuenstler.com/",
-    "description": "PDF, Word, PowerPoint und Excel online in Markdown umwandeln, mit Texterkennung für gescannte PDFs.",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Web",
-    "inLanguage": "de",
-    "isAccessibleForFree": true,
-    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"},
-    "author": {"@type": "Person", "name": "Matthias Hartmann"}
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "KI-Künstler · Markdown",
+        "url": "https://markdown.ki-kuenstler.com/",
+        "description": "PDF, Word, PowerPoint und Excel kostenlos online in Markdown umwandeln, mit Texterkennung für gescannte PDFs.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "de",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Matthias Hartmann"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "inLanguage": "de",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Ist die Umwandlung kostenlos?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja. Es gibt keine Anmeldung, kein Konto und keine Werbung. Wer das Projekt unterstützen möchte, kann mir einen Kaffee spendieren."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Werden meine Dateien gespeichert?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nein. Die Datei wird nur für die Umwandlung im Arbeitsspeicher verarbeitet und danach verworfen. Auch das Ergebnis wird nicht gespeichert. Details stehen in der Datenschutzerklärung."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Funktioniert das auch mit gescannten PDFs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja. Hat ein PDF keinen auslesbaren Text, zum Beispiel weil es eingescannt wurde, liest die Texterkennung Tesseract den Text aus, direkt auf meinem Server. Das klappt gut bei Briefen und Texten; Tabellen in Scans werden nicht immer sauber erkannt. Bei Scans ist die Seitenzahl begrenzt."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Bleiben Tabellen erhalten?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja. Tabellen aus PDF, Word, PowerPoint und Excel werden als Markdown-Tabellen ausgegeben. Bei Excel wird jedes Tabellenblatt zu einer eigenen Tabelle mit Überschrift."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Welche Dateien werden unterstützt?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PDF, DOCX, PPTX, XLSX und CSV. Bei CSV-Dateien, etwa Exporten aus dem Online-Banking oder aus Excel, werden Zeichensatz und Trennzeichen (Semikolon, Komma oder Tab) automatisch erkannt. Ältere Formate wie DOC, PPT oder XLS bitte vorher im jeweiligen Programm als neues Format speichern. Die maximale Dateigröße steht im Upload-Feld."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Was bedeutet „Textabdeckung“?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Bei digitalen PDFs vergleicht das Tool nach der Umwandlung, wie viele Wörter und Zahlen aus der Textebene des PDFs im Markdown wieder auftauchen. Kopf- und Fußzeilen werden absichtlich weggelassen, deshalb liegt der Wert selten bei 100 %. Seiten unter 90 % werden einzeln genannt. Bei Scans gibt es keinen Wert, weil dort keine Textebene als Vergleich vorliegt."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Wie wird umgewandelt?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PDFs mit Text wandelt PyMuPDF4LLM um, das den Seitenaufbau mit Spalten und Tabellen erkennt. Word, PowerPoint und Excel übernimmt MarkItDown von Microsoft, Scans liest OCRmyPDF mit Tesseract. Alles läuft auf meinem eigenen Server in Deutschland, keine Datei geht an einen KI-Dienst."
+            }
+          }
+        ]
+      }
+    ]
   }
   </script>
   <link rel="stylesheet" href="/static/style.css?v=19">
@@ -55,8 +133,8 @@
   <main class="wrap">
     <section class="intro">
       <div>
-        <h1>Dateien in Markdown umwandeln</h1>
-        <p>PDF, Word, PowerPoint und Excel hochladen und sauberes Markdown zurückbekommen, zum Kopieren oder als .md-Datei. Ideal für die Weiterarbeit mit einer KI wie ChatGPT oder Claude: Markdown braucht meist deutlich weniger Tokens als das Original und spart so Kosten.</p>
+        <h1>PDF, Word und Excel kostenlos in Markdown umwandeln</h1>
+        <p>PDF, Word, PowerPoint und Excel hochladen und sauberes Markdown zurückbekommen, zum Kopieren oder als .md-Datei. Kostenlos, ohne Anmeldung und ohne Werbung. Ideal für die Weiterarbeit mit einer KI wie ChatGPT oder Claude: Markdown braucht meist deutlich weniger Tokens als das Original und spart so Kosten.</p>
       </div>
       <svg class="flow" viewBox="0 0 486 124" role="img" aria-label="Ein Dokument wird in Markdown umgewandelt und dann mit weniger Tokens an eine KI gegeben">
         <g class="doc">

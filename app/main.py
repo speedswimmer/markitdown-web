@@ -55,6 +55,29 @@ def _env_int(name: str, default: int, low: int, high: int) -> int:
 
 
 STATIC_DIR = Path(__file__).parent / "static"
+SITE = "https://markdown.ki-kuenstler.com"
+# Public pages with their source file, for the sitemap.
+SITEMAP_PAGES = (("/", "index.html"), ("/en", "en.html"))
+
+
+def _sitemap_xml() -> str:
+    """Sitemap with lastmod taken from each page file, so it never goes stale."""
+    alternates = "".join(
+        f'\n    <xhtml:link rel="alternate" hreflang="{lang}" href="{SITE}{path}"/>'
+        for lang, path in (("de", "/"), ("en", "/en"))
+    )
+    entries = []
+    for path, filename in SITEMAP_PAGES:
+        modified = time.strftime("%Y-%m-%d", time.gmtime((STATIC_DIR / filename).stat().st_mtime))
+        entries.append(
+            f"  <url>\n    <loc>{SITE}{path}</loc>\n    <lastmod>{modified}</lastmod>{alternates}\n  </url>"
+        )
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+        ' xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(entries) + "\n</urlset>\n"
+    )
+
 
 MAX_UPLOAD_MB = _env_int("MAX_UPLOAD_MB", 30, 1, 30)
 MAX_BYTES = MAX_UPLOAD_MB * 1024 * 1024
@@ -436,8 +459,17 @@ def create_app(
         return FileResponse(STATIC_DIR / "robots.txt", media_type="text/plain; charset=utf-8")
 
     @app.api_route("/sitemap.xml", methods=["GET", "HEAD"])
-    def sitemap() -> FileResponse:
-        return FileResponse(STATIC_DIR / "sitemap.xml", media_type="application/xml")
+    def sitemap() -> Response:
+        return Response(_sitemap_xml(), media_type="application/xml")
+
+    # Browsers and search engines request these at the root regardless of <link> tags.
+    @app.api_route("/favicon.ico", methods=["GET", "HEAD"])
+    def favicon() -> FileResponse:
+        return FileResponse(STATIC_DIR / "favicon.ico", media_type="image/x-icon")
+
+    @app.api_route("/apple-touch-icon.png", methods=["GET", "HEAD"])
+    def apple_touch_icon() -> FileResponse:
+        return FileResponse(STATIC_DIR / "apple-touch-icon.png", media_type="image/png")
 
     @app.get("/health")
     def health() -> dict[str, object]:

@@ -12,6 +12,8 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#2563eb">
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
   <meta property="og:site_name" content="KI-Künstler · Markdown">
@@ -23,19 +25,95 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Convert PDF, Word, PowerPoint and Excel to Markdown">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Convert PDF, Word, PowerPoint and Excel to Markdown">
+  <meta name="twitter:description" content="Free, no sign-up, files are not stored. Markdown saves tokens with ChatGPT and Claude.">
+  <meta name="twitter:image" content="https://markdown.ki-kuenstler.com/static/og-image.png">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "KI-Künstler · Markdown",
-    "url": "https://markdown.ki-kuenstler.com/en",
-    "description": "Convert PDF, Word, PowerPoint and Excel to Markdown online, with OCR for scanned PDFs.",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Web",
-    "inLanguage": "en",
-    "isAccessibleForFree": true,
-    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"},
-    "author": {"@type": "Person", "name": "Matthias Hartmann"}
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "KI-Künstler · Markdown",
+        "url": "https://markdown.ki-kuenstler.com/en",
+        "description": "Convert PDF, Word, PowerPoint and Excel to Markdown online for free, with OCR for scanned PDFs.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Matthias Hartmann"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "inLanguage": "en",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is the conversion free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. There is no sign-up, no account and no advertising. If you'd like to support the project, you can buy me a coffee."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my files stored?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The file is processed in memory only for the conversion and discarded afterwards. The result is not stored either. Details are in the privacy policy (in German)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does it work with scanned PDFs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. If a PDF has no readable text, for example because it was scanned, the OCR engine Tesseract reads the text, right on my server. This works well for letters and running text; tables in scans are not always recognized cleanly. The number of pages is limited for scans."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are tables preserved?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Tables from PDF, Word, PowerPoint and Excel come out as Markdown tables. In Excel files, every sheet becomes its own table with a heading."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which files are supported?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PDF, DOCX, PPTX, XLSX and CSV. For CSV files, such as online banking or Excel exports, the character set and the delimiter (semicolon, comma or tab) are detected automatically. Please save older formats such as DOC, PPT or XLS in the newer format first. The maximum file size is shown in the upload box."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What does “text coverage” mean?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For digital PDFs, the tool checks after the conversion how many words and numbers from the PDF's text layer appear in the Markdown. Running headers and footers are dropped on purpose, so the value is rarely 100 %. Pages below 90 % are listed individually. Scans get no value because there is no text layer to compare against."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the conversion work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PDFs with text are converted by PyMuPDF4LLM, which understands page layouts with columns and tables. Word, PowerPoint and Excel are handled by Microsoft's MarkItDown, and scans are read by OCRmyPDF with Tesseract. Everything runs on my own server in Germany; no file is sent to an AI service."
+            }
+          }
+        ]
+      }
+    ]
   }
   </script>
   <link rel="stylesheet" href="/static/style.css?v=19">
@@ -55,8 +133,8 @@
   <main class="wrap">
     <section class="intro">
       <div>
-        <h1>Convert files to Markdown</h1>
-        <p>Upload a PDF, Word, PowerPoint or Excel file and get clean Markdown back, to copy or as an .md file. Ideal for working with an AI such as ChatGPT or Claude: Markdown usually needs far fewer tokens than the original, which saves money.</p>
+        <h1>Convert PDF, Word and Excel to Markdown for free</h1>
+        <p>Upload a PDF, Word, PowerPoint or Excel file and get clean Markdown back, to copy or as an .md file. Free, no sign-up, no ads. Ideal for working with an AI such as ChatGPT or Claude: Markdown usually needs far fewer tokens than the original, which saves money.</p>
       </div>
       <svg class="flow" viewBox="0 0 486 124" role="img" aria-label="A document is converted to Markdown and then passed to an AI with fewer tokens">
         <g class="doc">

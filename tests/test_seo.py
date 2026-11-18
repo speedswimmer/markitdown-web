@@ -1,6 +1,7 @@
 """Tests for search engine metadata, crawler files and the indexable page text."""
 import json
 import re
+import time
 
 import pytest
 from fastapi.testclient import TestClient
@@ -27,12 +28,24 @@ def test_index_has_search_metadata(html: str) -> None:
     assert f'property="og:image" content="{SITE}/static/og-image.png"' in html
 
 
-def test_index_has_valid_json_ld(html: str) -> None:
-    blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL)
+@pytest.mark.parametrize(("path", "free_word"), [("/", "kostenlos"), ("/en", "free")])
+def test_json_ld_describes_free_app_and_mirrors_faq(client: TestClient, path: str, free_word: str) -> None:
+    page = client.get(path).text
+    blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', page, re.DOTALL)
     assert len(blocks) == 1
     data = json.loads(blocks[0])
-    assert data["@type"] == "WebApplication"
-    assert data["url"] == f"{SITE}/"
+    by_type = {node["@type"]: node for node in data["@graph"]}
+    app = by_type["WebApplication"]
+    assert app["url"] == SITE + path
+    assert app["isAccessibleForFree"] is True
+    assert app["offers"]["price"] == "0"
+    # The FAQ schema must mirror the visible FAQ, question for question.
+    summaries = re.findall(r"<details>\s*<summary>(.*?)</summary>", page, re.DOTALL)
+    questions = by_type["FAQPage"]["mainEntity"]
+    assert [q["name"] for q in questions] == [re.sub(r"<[^>]+>", "", s).strip() for s in summaries]
+    assert all(q["acceptedAnswer"]["text"] for q in questions)
+    # "Free" has to be in the visible headline, not only in metadata.
+    assert free_word in re.search(r"<h1>(.*?)</h1>", page).group(1)
 
 
 def test_index_has_indexable_text(html: str) -> None:
@@ -68,6 +81,41 @@ def test_sitemap_xml(client: TestClient) -> None:
     assert response.status_code == 200
     assert "xml" in response.headers["content-type"]
     assert f"<loc>{SITE}/</loc>" in response.text
+    assert f"<loc>{SITE}/en</loc>" in response.text
+    assert response.text.count('hreflang="en"') == 2
+    # lastmod follows the page files instead of a hand-maintained date.
+    dates = re.findall(r"<lastmod>(\d{4}-\d{2}-\d{2})</lastmod>", response.text)
+    assert len(dates) == 2
+    expected = time.strftime("%Y-%m-%d", time.gmtime((main.STATIC_DIR / "index.html").stat().st_mtime))
+    assert dates[0] == expected
+
+
+@pytest.mark.parametrize(
+    ("path", "content_type", "magic"),
+    [
+        ("/favicon.ico", "image/x-icon", b"\x00\x00\x01\x00"),
+        ("/apple-touch-icon.png", "image/png", b"\x89PNG\r\n\x1a\n"),
+    ],
+)
+def test_root_icons_are_served(client: TestClient, path: str, content_type: str, magic: bytes) -> None:
+    response = client.get(path)
+    assert response.status_code == 200
+    assert response.headers["content-type"] == content_type
+    assert response.content.startswith(magic)
+    assert client.head(path).status_code == 200
+
+
+@pytest.mark.parametrize("path", ["/", "/en", "/impressum", "/datenschutz"])
+def test_pages_link_root_icons(client: TestClient, path: str) -> None:
+    page = client.get(path).text
+    assert '<link rel="icon" href="/favicon.ico"' in page
+    assert '<link rel="apple-touch-icon" href="/apple-touch-icon.png">' in page
+
+
+def test_twitter_tags_mirror_open_graph(html: str) -> None:
+    for name in ("title", "description", "image"):
+        og = re.search(rf'<meta property="og:{name}" content="([^"]+)">', html).group(1)
+        assert f'<meta name="twitter:{name}" content="{og}">' in html
 
 
 def test_og_image_is_served(client: TestClient) -> None:

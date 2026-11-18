@@ -101,7 +101,7 @@ def test_english_page(client: TestClient) -> None:
     html = response.text
     assert '<html lang="en">' in html
     assert f'<link rel="canonical" href="{SITE}/en">' in html
-    assert "<h1>Convert files to Markdown</h1>" in html
+    assert "<h1>Convert PDF, Word and Excel to Markdown for free</h1>" in html
     assert '<a href="/" hreflang="de" lang="de"' in html
     assert client.head("/en").status_code == 200
 
