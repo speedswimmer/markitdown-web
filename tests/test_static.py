@@ -48,6 +48,11 @@ def test_index_has_ocr_option_and_note(html: str) -> None:
     assert 'id="note"' in html
     assert "nicht gespeichert" in html
     assert 'id="note-ocr" hidden' in html
+    # The Claude sentence is added by app.js only when /health reports ocr_engine=claude,
+    # so a Tesseract instance never serves it to crawlers.
+    assert "Anthropic" not in html
+    js = (main.STATIC_DIR / "app.js").read_text(encoding="utf-8")
+    assert "Claude (Anthropic)" in js
 
 
 def test_app_reads_health() -> None:
@@ -180,4 +185,4 @@ def test_both_pages_load_the_same_app_js_version() -> None:
     client = TestClient(main.create_app(lambda chunk: ""))
     tags = [re.search(r'src="/static/app\.js\?v=(\d+)"', client.get(p).text) for p in ("/", "/en")]
     assert all(tags)
-    assert tags[0].group(1) == tags[1].group(1) == "13"
+    assert tags[0].group(1) == tags[1].group(1) == "14"

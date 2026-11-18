@@ -26,6 +26,7 @@
       uploadStart: "Hochladen …",
       processing: "Wird verarbeitet …",
       claudeHint: "Scans brauchen etwa 2–4 Sekunden pro Seite.",
+      claudeNote: " Scans werden dafür an Claude (Anthropic) geschickt.",
       claudeRunning: "Texterkennung mit Claude …",
       tesseractHint: "Scans brauchen etwa 3–5 Sekunden pro Seite.",
       tesseractRunning: "Texterkennung läuft …",
@@ -72,6 +73,7 @@
       uploadStart: "Uploading …",
       processing: "Processing …",
       claudeHint: "Scans take about 2–4 seconds per page.",
+      claudeNote: " Scans are sent to Claude (Anthropic) for this.",
       claudeRunning: "Text recognition with Claude …",
       tesseractHint: "Scans take about 3–5 seconds per page.",
       tesseractRunning: "Text recognition running …",
@@ -137,7 +139,11 @@
       ocrOption.hidden = !ocrAvailable;
       if (!ocrAvailable) ocr.checked = false;
       // Only Claude sends pages off the server; local OCR (Tesseract) needs no note.
-      noteOcr.hidden = health.ocr_engine !== "claude";
+      // The sentence lives here, not in the HTML, so crawlers never see it on a Tesseract instance.
+      if (health.ocr_engine === "claude") {
+        noteOcr.textContent = TEXT.claudeNote;
+        noteOcr.hidden = false;
+      }
     })
     .catch(() => { /* keep defaults; the server enforces its own limits */ });
 
