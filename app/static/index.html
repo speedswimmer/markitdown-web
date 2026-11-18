@@ -73,6 +73,14 @@
           },
           {
             "@type": "Question",
+            "name": "Wo werden meine Dateien verarbeitet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Auf meinem eigenen, physischen Server in Deutschland, nicht in einer Cloud. Umwandlung und Texterkennung laufen vollständig dort. Kein Inhalt geht an einen KI-Dienst oder einen anderen Anbieter. Lediglich die verschlüsselte Übertragung zwischen deinem Browser und dem Server läuft über Cloudflare, Details dazu stehen in der Datenschutzerklärung."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Funktioniert das auch mit gescannten PDFs?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -108,7 +116,7 @@
             "name": "Wie wird umgewandelt?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "PDFs mit Text wandelt PyMuPDF4LLM um, das den Seitenaufbau mit Spalten und Tabellen erkennt. Word, PowerPoint und Excel übernimmt MarkItDown von Microsoft, Scans liest OCRmyPDF mit Tesseract. Alles läuft auf meinem eigenen Server in Deutschland, keine Datei geht an einen KI-Dienst."
+              "text": "PDFs mit Text wandelt PyMuPDF4LLM um, das den Seitenaufbau mit Spalten und Tabellen erkennt. Word, PowerPoint und Excel übernimmt MarkItDown von Microsoft, Scans liest OCRmyPDF mit Tesseract."
             }
           }
         ]
@@ -281,6 +289,10 @@
           <p>Nein. Die Datei wird nur für die Umwandlung im Arbeitsspeicher verarbeitet und danach verworfen. Auch das Ergebnis wird nicht gespeichert. Details stehen in der <a href="/datenschutz">Datenschutzerklärung</a>.</p>
         </details>
         <details>
+          <summary>Wo werden meine Dateien verarbeitet?</summary>
+          <p>Auf meinem eigenen, physischen Server in Deutschland, nicht in einer Cloud. Umwandlung und Texterkennung laufen vollständig dort. Kein Inhalt geht an einen KI-Dienst oder einen anderen Anbieter. Lediglich die verschlüsselte Übertragung zwischen deinem Browser und dem Server läuft über Cloudflare, Details dazu stehen in der <a href="/datenschutz">Datenschutzerklärung</a>.</p>
+        </details>
+        <details>
           <summary>Funktioniert das auch mit gescannten PDFs?</summary>
           <p>Ja. Hat ein PDF keinen auslesbaren Text, zum Beispiel weil es eingescannt wurde, liest die Texterkennung <a href="https://github.com/tesseract-ocr/tesseract" rel="noopener noreferrer">Tesseract</a> den Text aus, direkt auf meinem Server. Das klappt gut bei Briefen und Texten; Tabellen in Scans werden nicht immer sauber erkannt. Bei Scans ist die Seitenzahl begrenzt.</p>
         </details>
@@ -298,7 +310,7 @@
         </details>
         <details>
           <summary>Wie wird umgewandelt?</summary>
-          <p>PDFs mit Text wandelt <a href="https://github.com/pymupdf/pymupdf4llm" rel="noopener noreferrer">PyMuPDF4LLM</a> um, das den Seitenaufbau mit Spalten und Tabellen erkennt. Word, PowerPoint und Excel übernimmt <a href="https://github.com/microsoft/markitdown" rel="noopener noreferrer">MarkItDown</a> von Microsoft, Scans liest <a href="https://ocrmypdf.readthedocs.io/" rel="noopener noreferrer">OCRmyPDF</a> mit Tesseract. Alles läuft auf meinem eigenen Server in Deutschland, keine Datei geht an einen KI-Dienst.</p>
+          <p>PDFs mit Text wandelt <a href="https://github.com/pymupdf/pymupdf4llm" rel="noopener noreferrer">PyMuPDF4LLM</a> um, das den Seitenaufbau mit Spalten und Tabellen erkennt. Word, PowerPoint und Excel übernimmt <a href="https://github.com/microsoft/markitdown" rel="noopener noreferrer">MarkItDown</a> von Microsoft, Scans liest <a href="https://ocrmypdf.readthedocs.io/" rel="noopener noreferrer">OCRmyPDF</a> mit Tesseract.</p>
         </details>
       </details>
     </section>

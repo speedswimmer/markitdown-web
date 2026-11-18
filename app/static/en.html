@@ -73,6 +73,14 @@
           },
           {
             "@type": "Question",
+            "name": "Where are my files processed?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "On my own physical server in Germany, not in a cloud. Conversion and OCR run entirely there. No content is sent to an AI service or any other provider. Only the encrypted transfer between your browser and the server passes through Cloudflare; see the privacy policy (in German) for details."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Does it work with scanned PDFs?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -108,7 +116,7 @@
             "name": "How does the conversion work?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "PDFs with text are converted by PyMuPDF4LLM, which understands page layouts with columns and tables. Word, PowerPoint and Excel are handled by Microsoft's MarkItDown, and scans are read by OCRmyPDF with Tesseract. Everything runs on my own server in Germany; no file is sent to an AI service."
+              "text": "PDFs with text are converted by PyMuPDF4LLM, which understands page layouts with columns and tables. Word, PowerPoint and Excel are handled by Microsoft's MarkItDown, and scans are read by OCRmyPDF with Tesseract."
             }
           }
         ]
@@ -281,6 +289,10 @@
           <p>No. The file is processed in memory only for the conversion and discarded afterwards. The result is not stored either. Details are in the <a href="/datenschutz" hreflang="de">privacy policy</a> (in German).</p>
         </details>
         <details>
+          <summary>Where are my files processed?</summary>
+          <p>On my own physical server in Germany, not in a cloud. Conversion and OCR run entirely there. No content is sent to an AI service or any other provider. Only the encrypted transfer between your browser and the server passes through Cloudflare; see the <a href="/datenschutz" hreflang="de">privacy policy</a> (in German) for details.</p>
+        </details>
+        <details>
           <summary>Does it work with scanned PDFs?</summary>
           <p>Yes. If a PDF has no readable text, for example because it was scanned, the OCR engine <a href="https://github.com/tesseract-ocr/tesseract" rel="noopener noreferrer">Tesseract</a> reads the text, right on my server. This works well for letters and running text; tables in scans are not always recognized cleanly. The number of pages is limited for scans.</p>
         </details>
@@ -298,7 +310,7 @@
         </details>
         <details>
           <summary>How does the conversion work?</summary>
-          <p>PDFs with text are converted by <a href="https://github.com/pymupdf/pymupdf4llm" rel="noopener noreferrer">PyMuPDF4LLM</a>, which understands page layouts with columns and tables. Word, PowerPoint and Excel are handled by Microsoft's <a href="https://github.com/microsoft/markitdown" rel="noopener noreferrer">MarkItDown</a>, and scans are read by <a href="https://ocrmypdf.readthedocs.io/" rel="noopener noreferrer">OCRmyPDF</a> with Tesseract. Everything runs on my own server in Germany; no file is sent to an AI service.</p>
+          <p>PDFs with text are converted by <a href="https://github.com/pymupdf/pymupdf4llm" rel="noopener noreferrer">PyMuPDF4LLM</a>, which understands page layouts with columns and tables. Word, PowerPoint and Excel are handled by Microsoft's <a href="https://github.com/microsoft/markitdown" rel="noopener noreferrer">MarkItDown</a>, and scans are read by <a href="https://ocrmypdf.readthedocs.io/" rel="noopener noreferrer">OCRmyPDF</a> with Tesseract.</p>
         </details>
       </details>
     </section>
