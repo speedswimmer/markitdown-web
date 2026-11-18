@@ -17,7 +17,7 @@ services:
     environment:
       COUNTER_FILE: /data/converted.txt
       # Coffee donations received so far; raise it by hand after each one.
-      COFFEES: "1"
+      COFFEES: "2"
     # The only writable place besides /tmp: the conversion counter.
     volumes:
       - data:/data

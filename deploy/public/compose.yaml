@@ -21,7 +21,7 @@ services:
       MAX_OCR_PAGES: "20"
       COUNTER_FILE: /data/converted.txt
       # Coffee donations received so far; raise it by hand after each one.
-      COFFEES: "1"
+      COFFEES: "2"
     networks:
       - public
     restart: unless-stopped
