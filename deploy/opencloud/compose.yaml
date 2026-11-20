@@ -1,0 +1,67 @@
+# OpenCloud: private file storage behind the existing Cloudflare Tunnel (cloud.ki-kuenstler.com).
+# Layout on the Pi: /opt/opencloud/{compose.yaml,.env,config/,data/,backup.sh,restic.pw}
+# config/ and data/ are owned by 1000:1000 (the UID inside the image), mode 0700.
+#
+# Network: "opencloud-net" (172.30.2.0/24) is created once by hand:
+#   docker network create --subnet 172.30.2.0/24 opencloud-net
+# cloudflared (/opt/markitdown-public) joins it and reaches http://opencloud:9200.
+# The subnet is covered by isolate.sh, so the container cannot talk to LAN or tailnet,
+# but it does have internet access: OpenCloud must reach its own OC_URL for OIDC.
+#
+# Tunnel route (Cloudflare dashboard): cloud.ki-kuenstler.com -> http://opencloud:9200
+services:
+  opencloud:
+    image: opencloudeu/opencloud:9.1.1
+    container_name: opencloud
+    user: "1000:1000"
+    # init writes a config with random secrets on the first start and fails afterwards.
+    entrypoint: ["/bin/sh"]
+    command: ["-c", "opencloud init || true; opencloud server"]
+    # IDM_ADMIN_PASSWORD lives in .env (root only); it is only read on the very first start.
+    env_file: .env
+    environment:
+      OC_URL: https://cloud.ki-kuenstler.com
+      PROXY_HTTP_ADDR: "0.0.0.0:9200"
+      # TLS ends at Cloudflare; the tunnel talks plain HTTP to the container.
+      PROXY_TLS: "false"
+      OC_INSECURE: "false"
+      IDM_CREATE_DEMO_USERS: "false"
+      PROXY_ENABLE_BASIC_AUTH: "false"
+      OC_LOG_LEVEL: warn
+      OC_DEFAULT_LANGUAGE: de
+    # The host resolver is the LAN router, which isolate.sh blocks.
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    networks:
+      - opencloud-net
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+    volumes:
+      - ./config:/etc/opencloud
+      - ./data:/var/lib/opencloud
+    mem_limit: 2g
+    memswap_limit: 2g
+    pids_limit: 512
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9200/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  opencloud-net:
+    external: true

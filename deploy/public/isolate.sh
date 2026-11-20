@@ -1,5 +1,6 @@
 #!/bin/sh
-# Keeps the tunnel networks (172.30.0.0/23) away from private address ranges.
+# Keeps the tunnel networks (172.30.0.0/22: markitdown-public, cloudflared egress and
+# opencloud-net) away from private address ranges.
 # Idempotent: rebuilds its own chain and hooks it into DOCKER-USER and INPUT once.
 # Runs before docker.service: Docker keeps an existing DOCKER-USER chain and its rules
 # and adds its own FORWARD jump to it on start, so the rules are in place before any
@@ -14,13 +15,15 @@ if [ -f /etc/docker/daemon.json ] \
 fi
 
 chain=MDPUBLIC-ISOLATE
-src=172.30.0.0/23
+src=172.30.0.0/22
 
 iptables -N DOCKER-USER 2>/dev/null || true
 iptables -N "$chain" 2>/dev/null || true
 iptables -F "$chain"
 # cloudflared <-> markitdown-public inside the internal network.
 iptables -A "$chain" -d 172.30.1.0/24 -j RETURN
+# cloudflared <-> opencloud (opencloud-net, see /opt/opencloud/compose.yaml).
+iptables -A "$chain" -d 172.30.2.0/24 -j RETURN
 for net in 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 100.64.0.0/10 169.254.0.0/16 \
   0.0.0.0/8 127.0.0.0/8 192.0.0.0/24 198.18.0.0/15 224.0.0.0/4 240.0.0.0/4; do
   iptables -A "$chain" -d "$net" -j DROP

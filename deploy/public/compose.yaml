@@ -59,6 +59,8 @@ services:
     networks:
       - public
       - tunnel-egress
+      # OpenCloud (/opt/opencloud) lives here; created by hand, see its compose.yaml.
+      - opencloud-net
     depends_on:
       markitdown-public:
         condition: service_healthy
@@ -87,6 +89,8 @@ networks:
     ipam:
       config:
         - subnet: 172.30.0.0/24
+  opencloud-net:
+    external: true
 
 volumes:
   data:

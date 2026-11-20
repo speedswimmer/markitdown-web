@@ -1,0 +1,10 @@
+[Unit]
+Description=Backup OpenCloud to the USB disk with restic
+RequiresMountsFor=/mnt/backup
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/opencloud/backup.sh
+Nice=10
+IOSchedulingClass=idle
