@@ -45,6 +45,13 @@ front of it for HTTPS. `deploy/compose.yaml` is the setup I use on the Pi
 an internal Docker network and an iptables script that keeps the tunnel
 containers away from the LAN.
 
+`deploy/opencloud/` is not part of markitdown-web: it is the OpenCloud
+instance (private file storage) that shares the Pi and the Cloudflare Tunnel.
+It lives there because the tunnel container and `isolate.sh` have to know
+about its network. The folder holds the compose file, a nightly restic backup
+script and its systemd timer. The admin password goes into an `.env` next to
+the compose file before the first start.
+
 Without Docker, for development:
 
 ```sh
